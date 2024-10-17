@@ -1,4 +1,4 @@
-name: kernel
+name: Kernel
 
 on:
   workflow_dispatch:
