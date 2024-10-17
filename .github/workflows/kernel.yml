@@ -11,8 +11,9 @@ jobs:
     steps:
       - name: Clone
         run: |
-          git clone https://github.com/torvalds/linux.git
-          mv linux/* .
+          curl -LO https://github.com/torvalds/linux/archive/refs/heads/master.zip
+          unzip master.zip
+          mv linux-master/* .
       - name: Build kernel
         run: |
           sudo apt update
