@@ -1,0 +1,33 @@
+name: kernel
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 1 * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Clone
+        run: |
+          git clone https://github.com/torvalds/linux.git
+          mv linux/* .
+      - name: Build kernel
+        run: |
+          sudo apt update
+          sudo apt install bc binutils bison dwarves flex gcc git gnupg2 gzip libelf-dev libncurses5-dev libssl-dev make openssl pahole perl-base rsync tar xz-utils -y
+          make defconfig
+          make -j$(nproc)
+      - name: Zip up
+        run: |
+          cd x86 
+          tar czvf ../x86.tar.gz .
+          cd ..
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            vmlinux
+            x86.tar.gz
+            
