@@ -24,17 +24,15 @@ jobs:
           sudo apt install bc binutils bison dwarves flex gcc git gnupg2 gzip libelf-dev libncurses5-dev libssl-dev make openssl pahole perl-base rsync tar xz-utils -y
           make defconfig
           make -j$(nproc)
-      - name: Zip up
+      - name: Zip up modules
         run: |
-          cd arch/x86 
-          tar czvf ../../x86.tar.gz .
-          cd ../..
+          find . -name '*.ko' | cpio -H newc -o | gzip > modules.cpio.gz
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.date.outputs.date }}
           name: Build on ${{ steps.date.outputs.date }}
           files: |
-            vmlinux
-            x86.tar.gz
+            arch/x86/boot/bzImage
+            modules.cpio.gz
             
