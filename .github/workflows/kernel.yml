@@ -9,6 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
+      - name: Get current date
+        id: date
+        run: |
+          echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
       - name: Clone
         run: |
           curl -LO https://github.com/torvalds/linux/archive/refs/heads/master.zip
@@ -28,6 +32,8 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.date.outputs.date }}
+          name: Build on ${{ steps.date.outputs.date }}
           files: |
             vmlinux
             x86.tar.gz
