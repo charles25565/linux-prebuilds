@@ -15,13 +15,16 @@ jobs:
           echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
       - name: Clone
         run: |
-          curl -LO https://github.com/torvalds/linux/archive/refs/heads/master.zip
-          unzip master.zip
-          mv linux-master/* .
+          git clone --depth=1 --single-branch --branch=master https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
+          mv linux/* .
+          mv linux/.* .
+          rmdir linux
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install bc binutils bison dwarves flex gcc git gnupg2 gzip libelf-dev libncurses5-dev libssl-dev make openssl pahole perl-base rsync tar xz-utils -y
       - name: Build kernel
         run: |
-          sudo apt update
-          sudo apt install bc binutils bison dwarves flex gcc git gnupg2 gzip libelf-dev libncurses5-dev libssl-dev make openssl pahole perl-base rsync tar xz-utils -y
           make defconfig
           make -j$(nproc)
       - name: Zip up modules
