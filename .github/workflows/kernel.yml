@@ -16,7 +16,7 @@ jobs:
           echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
       - name: Clone
         run: |
-          git clone --depth=1 --single-branch --branch=master https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
+          git clone --depth=1 --single-branch --branch=master https://github.com/torvalds/linux.git
           mv linux/* .
           mv linux/.* .
           rmdir linux
