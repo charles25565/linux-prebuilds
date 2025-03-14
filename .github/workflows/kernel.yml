@@ -3,7 +3,7 @@ name: Kernel
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 1 * *'
+    - cron: '0 0 1 */3 *'
   push:
 
 jobs:
@@ -36,6 +36,7 @@ jobs:
         with:
           tag_name: ${{ steps.date.outputs.date }}
           name: Build on ${{ steps.date.outputs.date }}
+          prerelease: true
           files: |
             arch/x86/boot/bzImage
             modules.cpio.gz
