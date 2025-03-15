@@ -36,7 +36,6 @@ jobs:
         with:
           tag_name: ${{ steps.date.outputs.date }}
           name: Build on ${{ steps.date.outputs.date }}
-          prerelease: true
           files: |
             arch/x86/boot/bzImage
             modules.cpio.gz
