@@ -5,5 +5,5 @@ This is a project that provides bi-daily Linux kernel builds from GitHub Actions
 ## Decompressing `modules.cpio.gz`
 
 ```bash
-gzip -dc modules.cpio.gz | cpio -id
+gzip -cdk modules.cpio.gz | cpio -id
 ```
