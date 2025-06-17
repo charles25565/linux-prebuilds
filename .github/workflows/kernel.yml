@@ -16,19 +16,18 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-      - name: Get current date
-        id: date
-        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
       - name: Clone
         run: |
-          curl -Lo linux.tar.gz https://github.com/torvalds/linux/archive/refs/tags/v${VERSION}.tar.gz
-          tar xvf linux.tar.gz
+          set -x
+          curl -Lso linux.tar.gz https://github.com/torvalds/linux/archive/refs/tags/v${VERSION}.tar.gz
+          tar xf linux.tar.gz
           rm linux.tar.gz
-          mv linux-v${VERSION}/* .
-          mv linux-v${VERSION}/.* .
-          rmdir linux-v${VERSION}
+          mv linux-${VERSION}/* .
+          mv linux-${VERSION}/.* .
+          rmdir linux-${VERSION}
       - name: Build kernel
         run: |
+          set -x
           make defconfig
           make -j$(nproc)
       - name: Zip up modules
