@@ -2,11 +2,15 @@ name: Kernel
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 0 */2 * *'
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  VERSION: 6.15
 
 jobs:
   build:
@@ -17,14 +21,12 @@ jobs:
         run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
       - name: Clone
         run: |
-          git clone --depth=1 --single-branch --branch=master https://github.com/torvalds/linux.git
-          mv linux/* .
-          mv linux/.* .
-          rmdir linux
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install bc binutils bison dwarves flex gcc git gnupg2 gzip libelf-dev libncurses5-dev libssl-dev make openssl pahole perl-base rsync tar xz-utils -y
+          curl -Lo linux.tar.gz https://github.com/torvalds/linux/archive/refs/tags/v${VERSION}.tar.gz
+          tar xvf linux.tar.gz
+          rm linux.tar.gz
+          mv linux-v${VERSION}/* .
+          mv linux-v${VERSION}/.* .
+          rmdir linux-v${VERSION}
       - name: Build kernel
         run: |
           make defconfig
@@ -33,9 +35,10 @@ jobs:
         run: find . -name '*.ko' | cpio -H newc -o | gzip > modules.cpio.gz
       - name: Release
         uses: softprops/action-gh-release@v2
+        if: github.event_name != 'pull_request'
         with:
-          tag_name: ${{ steps.date.outputs.date }}
-          name: Build on ${{ steps.date.outputs.date }}
+          tag_name: v${{env.VERSION}}
+          name: Linux kernel ${{env.VERSION}}
           files: |
             arch/x86/boot/bzImage
             modules.cpio.gz
