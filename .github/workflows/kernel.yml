@@ -40,7 +40,7 @@ jobs:
           make defconfig
           make -j$(nproc) 1> /dev/null
       - name: Zip up modules
-        run: find . -name '*.ko' | cpio -H newc -o | gzip > modules.cpio.gz
+        run: find . -name '*.ko' -type f | cpio -H newc -o | gzip > modules.cpio.gz
       - name: Release
         uses: softprops/action-gh-release@v2
         if: github.event_name != 'pull_request'
